@@ -27,7 +27,9 @@ module.exports = function(source) {
   }
 
   const output = {
-    path: `${root}/${config.output.replace('[filename]', getFilename(this.resourcePath)) || 'en.po'}`
+    path: process.env.npm_lifecycle_event === 'maketranslationswidget'?
+      `${root}/${config.widget}` :
+      `${root}/${config.output}`
   }
 
   const methodNames = config.methods || [DEFAULT_GETTEXT];
