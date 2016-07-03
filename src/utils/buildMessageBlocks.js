@@ -13,8 +13,9 @@ import {
   map,
   head,
   split,
-  range
-  
+  range,
+  replace
+
 } from 'ramda';
 
 const root = process.env.PWD;
@@ -29,7 +30,9 @@ export const formatMessageBlock = (accum, translation) => {
 
   const translationBlock = cat(
     `#: ${path} ${translation.loc.line}:${translation.loc.column}\n`,
-    `msgid "${translation.text}"`
+    cat(cat('msgid "',
+    replace(/\"/g, '\\"', `${translation.text}`)),
+    '"')
   )
 
   if (isPluralForm(translation.text)){

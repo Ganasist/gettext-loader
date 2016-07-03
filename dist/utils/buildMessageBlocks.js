@@ -35,7 +35,7 @@ var getNumPlurals = exports.getNumPlurals = (0, _ramda.compose)(parseInt, _ramda
 var formatMessageBlock = exports.formatMessageBlock = function formatMessageBlock(accum, translation) {
   var path = (0, _makeRelativePath2.default)(translation.path);
 
-  var translationBlock = (0, _ramda.concat)('#: ' + path + ' ' + translation.loc.line + ':' + translation.loc.column + '\n', 'msgid "' + translation.text + '"');
+  var translationBlock = (0, _ramda.concat)('#: ' + path + ' ' + translation.loc.line + ':' + translation.loc.column + '\n', (0, _ramda.concat)((0, _ramda.concat)('msgid "', (0, _ramda.replace)(/\"/g, '\\"', '' + translation.text)), '"'));
 
   if ((0, _isPluralForm2.default)(translation.text)) {
     var msgstrs = (0, _ramda.compose)(buildMsgstrs, getNumPlurals)(config.header['Plural-Forms']);
