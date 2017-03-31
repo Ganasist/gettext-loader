@@ -84,7 +84,6 @@ module.exports = function (source) {
           console.log(found.length + ' new translations found in ' + (0, _utils.getFilename)(_this.resourcePath));
 
           outputs[i].source = formatTranslations(found);
-          console.log(outputs[i].source);
           _fs2.default.appendFileSync(outputs[i].path, outputs[i].source);
         }
       })();

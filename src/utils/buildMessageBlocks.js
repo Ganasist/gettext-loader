@@ -28,7 +28,7 @@ export const getNumPlurals = cx(parseInt, last, head, split(';'))
 export const formatMessageBlock = (accum, translation) => {
   const path = makeRelativePath(translation.path);
 
-  const translationBlock = cat(
+  let translationBlock = cat(
     `#: ${path} ${translation.loc.line}:${translation.loc.column}\n`,
     cat(cat('msgid "',
     replace(/\"/g, '\\"', `${translation.text}`)),
@@ -40,6 +40,13 @@ export const formatMessageBlock = (accum, translation) => {
       buildMsgstrs,
       getNumPlurals
     )(config.header['Plural-Forms'])
+
+    translationBlock = cat(
+      `${translationBlock}\n`,
+      cat(cat('msgid_plural "',
+      replace(/\"/g, '\\"', `${translation.text}`)),
+      '"')
+    )
 
     return cx(
       cat(accum),

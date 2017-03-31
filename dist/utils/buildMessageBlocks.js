@@ -40,6 +40,8 @@ var formatMessageBlock = exports.formatMessageBlock = function formatMessageBloc
   if ((0, _isPluralForm2.default)(translation.text)) {
     var msgstrs = (0, _ramda.compose)(buildMsgstrs, getNumPlurals)(config.header['Plural-Forms']);
 
+    translationBlock = (0, _ramda.concat)(translationBlock + '\n', (0, _ramda.concat)((0, _ramda.concat)('msgid_plural "', (0, _ramda.replace)(/\"/g, '\\"', '' + translation.text)), '"'));
+
     return (0, _ramda.compose)((0, _ramda.concat)(accum), (0, _ramda.concat)(translationBlock), (0, _ramda.concat)('\n'), (0, _ramda.concat)(msgstrs))('\n');
   }
 

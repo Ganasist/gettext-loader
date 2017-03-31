@@ -71,7 +71,6 @@ module.exports = function(source) {
         );
 
         outputs[i].source = formatTranslations(found);
-        console.log(outputs[i].source);
         fs.appendFileSync(outputs[i].path, outputs[i].source);
       }
 
