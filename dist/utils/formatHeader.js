@@ -7,12 +7,15 @@ exports.default = formatHeader;
 
 var _ramda = require('ramda');
 
-function formatHeader(header) {
+function formatHeader(header, language) {
 
   var headerKeys = (0, _ramda.keys)(header);
   var headerValues = (0, _ramda.values)(header);
 
   return (0, _ramda.reduce)(function (accum, key) {
+    if (key === 'Language' && language) {
+      headerValues[headerKeys.indexOf(key)] = language;
+    }
     return accum + ('"' + key + ' : ' + headerValues[headerKeys.indexOf(key)] + '"\n');
   }, '')(headerKeys);
 }

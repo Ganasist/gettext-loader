@@ -76,7 +76,7 @@ module.exports = function(source) {
 
     } catch (error) {
       const header_prefix = config.header_prefix || '';
-      const header = formatHeader(config.header);
+      const header = formatHeader(config.header, outputs[i].language);
       const body = formatTranslations(translations);
       outputs[i].source = `${header_prefix}\n${header}\n${body}`;
 

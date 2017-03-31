@@ -89,7 +89,7 @@ module.exports = function (source) {
       })();
     } catch (error) {
       var header_prefix = config.header_prefix || '';
-      var header = (0, _utils.formatHeader)(config.header);
+      var header = (0, _utils.formatHeader)(config.header, outputs[i].language);
       var body = formatTranslations(translations);
       outputs[i].source = header_prefix + '\n' + header + '\n' + body;
 
