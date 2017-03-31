@@ -69,7 +69,7 @@ npm run examples
 
 `gettext-loader` parses your source code:
 
-```javascript
+```jsx harmony
 //example.jsx
 import React from 'react';
 import {__} from 'i18n';
