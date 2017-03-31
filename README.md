@@ -115,6 +115,7 @@ msgtr ""
 
 #: assets/jsx/example.jsx 6:17
 msgid "I saw the morning star %d day ago"
+msgid_plural "I saw the morning star %d day ago"
 msgtr[0] ""
 msgtr[1] ""
 
