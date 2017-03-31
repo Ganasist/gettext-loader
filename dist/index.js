@@ -40,46 +40,63 @@ module.exports = function (source) {
     this.cacheable();
   }
 
-  var output = {
-    path: process.env.npm_lifecycle_event === 'maketranslationswidget' ? root + '/' + config.widget : root + '/' + config.output
-  };
+  var outputs = [];
+
+  if (config.output) {
+    outputs.push({
+      path: process.env.npm_lifecycle_event === 'maketranslationswidget' ? root + '/' + config.widget : root + '/' + config.output
+    });
+  }
+
+  if (config.outputs) {
+    for (var key in config.outputs) {
+      if (!config.outputs.hasOwnProperty(key)) continue;
+
+      outputs.push({
+        path: root + '/' + config.outputs[key],
+        language: key
+      });
+    }
+  }
 
   var methodNames = config.methods || [DEFAULT_GETTEXT];
 
   var AST = (0, _utils.parseECMA)(source);
   var translations = _utils.extractTranslations.apply(undefined, _toConsumableArray(methodNames))(AST);
-
   if (!translations.length) {
     return source;
   }
 
   var formatTranslations = (0, _utils.formatWithRequest)(this.request);
 
-  try {
-    (function () {
-      var buffer = _fs2.default.readFileSync(output.path);
-      var current = _po2json2.default.parse(buffer);
-      var newStrings = function newStrings(node) {
-        return !current[(0, _ramda.prop)('text')(node)];
-      };
-      var found = (0, _ramda.filter)(newStrings)(translations);
+  for (var i = 0; i < outputs.length; i++) {
+    try {
+      (function () {
+        var buffer = _fs2.default.readFileSync(outputs[i].path);
+        var current = _po2json2.default.parse(buffer);
+        var newStrings = function newStrings(node) {
+          return !current[(0, _ramda.prop)('text')(node)];
+        };
+        var found = (0, _ramda.filter)(newStrings)(translations);
 
-      if (found.length) {
+        if (found.length) {
 
-        console.log(found.length + ' new translations found in ' + (0, _utils.getFilename)(_this.resourcePath));
+          console.log(found.length + ' new translations found in ' + (0, _utils.getFilename)(_this.resourcePath));
 
-        output.source = formatTranslations(found);
-        _fs2.default.appendFileSync(output.path, output.source);
-      }
-    })();
-  } catch (error) {
-    var header_prefix = config.header_prefix || '';
-    var header = (0, _utils.formatHeader)(config.header);
-    var body = formatTranslations(translations);
-    output.source = header_prefix + '\n' + header + '\n' + body;
+          outputs[i].source = formatTranslations(found);
+          console.log(outputs[i].source);
+          _fs2.default.appendFileSync(outputs[i].path, outputs[i].source);
+        }
+      })();
+    } catch (error) {
+      var header_prefix = config.header_prefix || '';
+      var header = (0, _utils.formatHeader)(config.header);
+      var body = formatTranslations(translations);
+      outputs[i].source = header_prefix + '\n' + header + '\n' + body;
 
-    _mkdirp2.default.sync((0, _utils.getFolderPath)(output.path));
-    _fs2.default.writeFileSync(output.path, output.source);
+      _mkdirp2.default.sync((0, _utils.getFolderPath)(outputs[i].path));
+      _fs2.default.writeFileSync(outputs[i].path, outputs[i].source);
+    }
   }
 
   return source;

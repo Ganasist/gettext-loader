@@ -17,7 +17,11 @@ To use `gettext-loader` you will need a `gettext.config.js` file in your root di
 
 module.exports = {
   methods: ['__', 'translate'],
-  output: 'i18n/en.po',
+  outputs: {
+    en: 'i18n/en.po',
+    se: 'i18n/se.po'
+  },
+  header_prefix: 'msgid ""\nmsgstr ""',
   header: {
     'Project-Id-Version': '1233',
     'Report-Msgid-Bugs-To':'Jonathan Huang',

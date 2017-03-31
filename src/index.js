@@ -26,47 +26,64 @@ module.exports = function(source) {
     this.cacheable();
   }
 
-  const output = {
-    path: process.env.npm_lifecycle_event === 'maketranslationswidget'?
-      `${root}/${config.widget}` :
-      `${root}/${config.output}`
+  const outputs = [];
+
+  if (config.output) {
+    outputs.push({
+        path: process.env.npm_lifecycle_event === 'maketranslationswidget'?
+          `${root}/${config.widget}` :
+          `${root}/${config.output}`
+      })
+  }
+
+  if (config.outputs) {
+    for (let key in config.outputs) {
+      if(!config.outputs.hasOwnProperty(key)) continue;
+
+      outputs.push({
+          path: `${root}/${config.outputs[key]}`,
+          language: key
+        })
+    }
   }
 
   const methodNames = config.methods || [DEFAULT_GETTEXT];
 
   const AST = parseECMA(source);
   const translations = extractTranslations(...methodNames)(AST);
-
   if (!translations.length){
     return source;
   }
 
   const formatTranslations = formatWithRequest(this.request);
 
-  try {
-    const buffer = fs.readFileSync(output.path);
-    const current = po2json.parse(buffer);
-    const newStrings = (node) => !current[prop('text')(node)]
-    const found = filter(newStrings)(translations);
+  for (let i = 0; i < outputs.length; i++) {
+    try {
+      const buffer = fs.readFileSync(outputs[i].path);
+      const current = po2json.parse(buffer);
+      const newStrings = (node) => !current[prop('text')(node)];
+      const found = filter(newStrings)(translations);
 
-    if (found.length){
+      if (found.length) {
 
-      console.log(
-        `${found.length} new translations found in ${getFilename(this.resourcePath)}`
-      );
+        console.log(
+          `${found.length} new translations found in ${getFilename(this.resourcePath)}`
+        );
 
-      output.source = formatTranslations(found);
-      fs.appendFileSync(output.path, output.source);
+        outputs[i].source = formatTranslations(found);
+        console.log(outputs[i].source);
+        fs.appendFileSync(outputs[i].path, outputs[i].source);
+      }
+
+    } catch (error) {
+      const header_prefix = config.header_prefix || '';
+      const header = formatHeader(config.header);
+      const body = formatTranslations(translations);
+      outputs[i].source = `${header_prefix}\n${header}\n${body}`;
+
+      mkdirp.sync(getFolderPath(outputs[i].path));
+      fs.writeFileSync(outputs[i].path, outputs[i].source);
     }
-
-  } catch (error) {
-    const header_prefix = config.header_prefix || '';
-    const header = formatHeader(config.header);
-    const body = formatTranslations(translations);
-    output.source = `${header_prefix}\n${header}\n${body}`
-
-    mkdirp.sync(getFolderPath(output.path));
-    fs.writeFileSync(output.path, output.source);
   }
 
   return source;
