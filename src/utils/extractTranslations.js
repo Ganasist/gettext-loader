@@ -1,4 +1,3 @@
-import {filter, map, curry, compose, prop, head} from 'ramda';
 import {filterTreeForMethodsAndFunctionsNamed} from 'estree-utils';
 
 const extractTranslations = (...args) => (ast) => {
@@ -9,22 +8,20 @@ const extractTranslations = (...args) => (ast) => {
     return [];
   }
 
-  const gettextLocations = map((node) => node.loc.start)(gettextFunctions);
-  const firstArgument = compose(prop('value'), head, prop('arguments'));
-  const translationStrings = map(firstArgument)(gettextFunctions);
-
-  const addLocation = (string) => {
-    const location = gettextLocations[translationStrings.indexOf(string)];
-    return {
-      text: string,
-      loc: {
-        line: location.line,
-        column: location.column
+  return gettextFunctions.map(
+      (node) => {
+        let strings = node.arguments.slice(0, 2).map((x) => x.value);
+        let location = node.loc.start;
+        return {
+          text: strings[0],
+          pluralForm: strings[1],
+          loc: {
+            line: location.line,
+            column: location.column
+          }
+        }
       }
-    }
-  }
-
-  return map(addLocation)(translationStrings);
+  );
 }
 
 export default extractTranslations;

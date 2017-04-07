@@ -1,17 +1,18 @@
 {
-  "name": "gettext-loader",
-  "version": "0.2.2.harut.1",
+  "name": "@harut/gettext-loader",
+  "version": "0.2.3",
   "description": "gettext webpack loader for creating en.po files",
   "main": "dist/index.js",
   "scripts": {
     "build:dev": "mkdir -p node_modules/gettext-loader && npm run build && cp -R dist/ node_modules/gettext-loader/ && cp -R package.json node_modules/gettext-loader/",
     "example": "npm run build:dev && webpack ./assets/index.js",
     "build": "gulp utils && babel src/ --out-dir dist/",
-    "test": "mocha --compilers js:babel-core/register"
+    "test": "mocha --compilers js:babel-core/register",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrblueblue/gettext-loader.git"
+    "url": "git+https://github.com/Harut/gettext-loader.git"
   },
   "keywords": [
     "gettext",
@@ -50,6 +51,7 @@
     "react": "^0.14.3"
   },
   "dependencies": {
+    "babel-cli": "^6.24.0",
     "esprima-fb": "^15001.1001.0-dev-harmony-fb",
     "estree-utils": "^0.1.1",
     "loader-utils": "^0.2.11",

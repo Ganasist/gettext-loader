@@ -5,6 +5,5 @@ export formatHeader from './formatHeader';
 export formatWithRequest from './formatWithRequest';
 export getFilename from './getFilename';
 export getFolderPath from './getFolderPath';
-export isPluralForm from './isPluralForm';
 export makeRelativePath from './makeRelativePath';
 export parseECMA from './parseECMA';

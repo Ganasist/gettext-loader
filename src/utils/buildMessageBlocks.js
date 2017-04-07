@@ -1,6 +1,5 @@
 import path from 'path';
 import makeRelativePath from './makeRelativePath';
-import isPluralForm from './isPluralForm';
 
 import {
 
@@ -35,7 +34,7 @@ export const formatMessageBlock = (accum, translation) => {
     '"')
   )
 
-  if (isPluralForm(translation.text)){
+  if (translation.pluralForm){
     const msgstrs = cx(
       buildMsgstrs,
       getNumPlurals
@@ -44,7 +43,7 @@ export const formatMessageBlock = (accum, translation) => {
     translationBlock = cat(
       `${translationBlock}\n`,
       cat(cat('msgid_plural "',
-      replace(/\"/g, '\\"', `${translation.text}`)),
+      replace(/\"/g, '\\"', `${translation.pluralForm}`)),
       '"')
     )
 
