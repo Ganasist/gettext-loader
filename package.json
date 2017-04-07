@@ -1,5 +1,5 @@
 {
-  "name": "@harut/gettext-loader",
+  "name": "gettext-loader2",
   "version": "0.2.3",
   "description": "gettext webpack loader for creating en.po files",
   "main": "dist/index.js",
