@@ -1,6 +1,6 @@
 {
   "name": "gettext-loader2",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "gettext webpack loader for creating en.po files",
   "main": "dist/index.js",
   "scripts": {
