@@ -9,7 +9,7 @@ export default function formatHeader(header, language){
     if (key === 'Language' && language) {
       headerValues[headerKeys.indexOf(key)] = language
     }
-    return accum + `"${key} : ${headerValues[headerKeys.indexOf(key)]}"\n`
+    return accum + `"${key} : ${headerValues[headerKeys.indexOf(key)]}\\n"\n`
   }, '')(headerKeys)
 
 }
