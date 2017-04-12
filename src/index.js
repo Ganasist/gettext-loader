@@ -65,10 +65,11 @@ module.exports = function(source) {
       const found = filter(newStrings)(translations);
 
       if (found.length) {
-
-        console.log(
-          `${found.length} new translations found in ${getFilename(this.resourcePath)}`
-        );
+        if (!config.silent) {
+          console.log(
+            `${found.length} new translations found in ${getFilename(this.resourcePath)}`
+          );
+        }
 
         outputs[i].source = formatTranslations(found);
         fs.appendFileSync(outputs[i].path, outputs[i].source);
