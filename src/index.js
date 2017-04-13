@@ -2,19 +2,14 @@ const DEFAULT_GETTEXT = '__'
 
 import fs from 'fs';
 import path from 'path';
-import mkdirp from 'mkdirp';
 import loaderUtils from 'loader-utils';
-import po2json from 'po2json';
-import {compose, prop, filter} from 'ramda';
+import gettextParser from 'gettext-parser';
 
 import {
   extractTranslations,
-  formatHeader,
   parseECMA,
-  addFilePath,
-  formatWithRequest,
   getFilename,
-  getFolderPath
+  makeRelativePath
 } from './utils';
 
 const root = process.env.PWD;
@@ -51,39 +46,59 @@ module.exports = function(source) {
 
   const AST = parseECMA(source);
   const translations = extractTranslations(...methodNames)(AST);
+  const fileName = makeRelativePath(this.request);
+
   if (!translations.length){
     return source;
   }
 
-  const formatTranslations = formatWithRequest(this.request);
-
   for (let i = 0; i < outputs.length; i++) {
-    try {
+    let current;
+    if (fs.existsSync(outputs[i].path)) {
       const buffer = fs.readFileSync(outputs[i].path);
-      const current = po2json.parse(buffer);
-      const newStrings = (node) => !current[prop('text')(node)];
-      const found = filter(newStrings)(translations);
-
-      if (found.length) {
-        if (!config.silent) {
-          console.log(
-            `${found.length} new translations found in ${getFilename(this.resourcePath)}`
-          );
-        }
-
-        outputs[i].source = formatTranslations(found);
-        fs.appendFileSync(outputs[i].path, outputs[i].source);
-      }
-
-    } catch (error) {
-      const header_prefix = config.header_prefix || '';
-      const header = formatHeader(config.header, outputs[i].language);
-      const body = formatTranslations(translations);
-      outputs[i].source = `${header_prefix}\n${header}\n${body}`;
-
-      mkdirp.sync(getFolderPath(outputs[i].path));
-      fs.writeFileSync(outputs[i].path, outputs[i].source);
+      current = gettextParser.po.parse(buffer, 'utf-8');
+    } else {
+      current = {
+        charset: 'utf-8',
+        translations: {'': {}}
+      };
     }
+    const newStrings = (node) => !current.translations[''][node.text];
+    const found = translations.filter(newStrings);
+
+    if (found.length) {
+      if (!config.silent) {
+        console.log(
+          `${found.length} new translations found in ${getFilename(this.resourcePath)}`
+        );
+      }
+    }
+
+    current.headers = config.header;
+    let trans = current.translations[''];
+
+    translations.forEach((translation) => {
+      const msgid = translation.text;
+      const reference = `${fileName}:${translation.loc.line}`;
+
+      if (msgid && trans[msgid]) {
+        trans[msgid].comments.reference += '\n' + reference;
+      } else {
+        trans[msgid] = {
+          msgid,
+          msgstr: (translation.pluralForm ? ['', ''] : ['']),
+          comments: {
+            reference: reference
+          }
+        };
+        if (translation.pluralForm) {
+          trans[msgid].msgid_plural = translation.pluralForm;
+        }
+      }
+    });
+
+    let outputBuf = gettextParser.po.compile(current);
+    require('fs').writeFileSync(outputs[i].path, outputBuf);
   }
 
   return source;
