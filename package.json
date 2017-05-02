@@ -1,5 +1,5 @@
 {
-  "name": "gettext-loader2",
+  "name": "gettext-loader",
   "version": "0.3.0",
   "description": "gettext webpack loader for creating en.po files",
   "main": "dist/index.js",
