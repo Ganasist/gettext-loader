@@ -1,6 +1,1 @@
-*.po
-i18n
-node_modules
-.tmp
-.idea/
-dist/
+node_modules/
