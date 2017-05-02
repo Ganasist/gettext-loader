@@ -48,10 +48,13 @@
     "webpack": "^1.12.2"
   },
   "dependencies": {
+    "coffee-script": "^1.12.5",
     "esprima-fb": "^15001.1001.0-dev-harmony-fb",
     "estree-utils": "^0.1.1",
     "gettext-parser": "^1.2.2",
+    "i18n": "^0.5.0",
     "loader-utils": "^0.2.11",
-    "ramda": "^0.17.1"
+    "ramda": "^0.17.1",
+    "react": "^0.13.3"
   }
 }
